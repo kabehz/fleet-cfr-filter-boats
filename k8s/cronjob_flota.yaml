@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: update-flota-cfr
+  namespace: datos-publicos
+spec:
+  schedule: "0 2 * * *"  # 2:00 AM todos los días
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: filtro-flota
+            image: ghcr.io/your-org/filtro-cfr:latest
+            env:
+            - name: CFR_DESDE
+              value: "ESP000000100"
+            - name: CFR_HASTA
+              value: "ESP999999999"
+            volumeMounts:
+            - name: datos-flota
+              mountPath: /data
+          restartPolicy: OnFailure
+          volumes:
+          - name: datos-flota
+            persistentVolumeClaim:
+              claimName: pvc-datos-flota

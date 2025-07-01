@@ -1,0 +1,49 @@
+
+name: CFR Filter and Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      cfr_desde:
+        description: 'CFR Desde'
+        required: true
+        default: 'ESP000000100'
+      cfr_hasta:
+        description: 'CFR Hasta'
+        required: true
+        default: 'ESP000000150'
+
+jobs:
+  fetch_and_filter:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.10
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          pip install pandas openpyxl
+
+      - name: Download official Excel source (Pesqueros)
+        run: |
+          mkdir -p data  
+          curl -L "https://servicio.pesca.mapama.es/CENSO/ConsultaBuqueRegistro/Buques/DownloadPesquerosReport" -o data/Listado_buques_pesca.xlsx
+
+      - name: Run CFR filter script
+        env:
+          CFR_DESDE: ${{ github.event.inputs.cfr_desde }}
+          CFR_HASTA: ${{ github.event.inputs.cfr_hasta }}
+        run: |
+          python filter_cfr_excel.py
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./output

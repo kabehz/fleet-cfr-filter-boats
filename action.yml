@@ -1,0 +1,20 @@
+name: 'CFR Filter from Official Source'
+description: 'Descarga y filtra datos de la flota pesquera desde fuentes oficiales'
+author: 'JaSiLez'
+
+inputs:
+  cfr_desde:
+    description: 'Valor inicial del rango CFR'
+    required: true
+    default: 'ESP000000100'
+  cfr_hasta:
+    description: 'Valor final del rango CFR'
+    required: true
+    default: 'ESP000000150'
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  env:
+    CFR_DESDE: ${{ inputs.cfr_desde }}
+    CFR_HASTA: ${{ inputs.cfr_hasta }}
