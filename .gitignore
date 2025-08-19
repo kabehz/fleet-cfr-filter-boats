@@ -1,0 +1,5 @@
+.venv/
+.data/
+filtro-flota/
+gh-app/
+k8s/
