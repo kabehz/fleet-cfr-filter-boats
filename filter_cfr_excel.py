@@ -1,6 +1,6 @@
 
 import pandas as pd
-import os
+import os, sys
 from openpyxl import load_workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
 
@@ -13,8 +13,7 @@ CFR_HASTA = os.getenv("CFR_HASTA", "ESP000000150")
 df = pd.read_excel(INPUT_FILE, header=3)
 df_filtrado = df[(df["CFR"] >= CFR_DESDE) & (df["CFR"] <= CFR_HASTA)]
 
-columnas = ["CFR", "Nombre", "Matrícula", "Estado", "Eslora total (m)",
-            "Arqueo (GT)", "Potencia (kW)", "Material del casco", "Puerto base", "Censo por modalidad"]
+columnas=["CFR","Nombre","Matrícula","Estado","Eslora total (m)","Arqueo GT","Potencia kW","Material del casco","Puerto base","Censo por modalidad"]
 columnas_validas = [col for col in columnas if col in df_filtrado.columns]
 
 df_final = df_filtrado[columnas_validas]
