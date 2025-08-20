@@ -4,92 +4,131 @@
 [![CI GitHub Actions](https://github.com/tu-org/filtro-flota/actions/workflows/ci.yml/badge.svg)](https://github.com/tu-org/filtro-flota/actions)
 [![Licencia EUPL v1.2](https://img.shields.io/badge/licencia-EUPL--1.2-green)](https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12)
 
-Este proyecto permite descargar, filtrar y transformar automáticamente los datos oficiales de la flota pesquera española. Genera salidas en Excel, JSON-LD y RDF, y expone una interfaz web estática para facilitar su uso por agentes inteligentes, analistas, periodistas de datos y sistemas semánticos.
+Este proyecto permite **descargar, filtrar y transformar automáticamente** los datos oficiales de la flota pesquera española. Produce salidas en Excel, JSON-LD y RDF, y expone una interfaz web estática para facilitar su uso por analistas, organismos públicos y sistemas de IA semántica.
 
 ---
 
 ## 🎯 Objetivo
 
-Automatizar la **extracción, clasificación y publicación semántica** de los datos públicos de buques de pesca, fomentando:
+Automatizar la **extracción, clasificación y publicación estructurada** de datos públicos de buques de pesca, promoviendo:
 
 * Transparencia institucional
-* Ciencia abierta y reproducible
-* Soberanía digital e interoperabilidad en Europa
+* Ciencia reproducible
+* Interoperabilidad semántica europea
 
 ---
 
-## 🚀 Cómo usar (CLI)
+## 🚀 Cómo usar (Script Python)
 
 ```bash
 python filter_cfr_excel.py \
   --output output/resultado.xlsx \
   --jsonld output/resultado.jsonld \
-  --rdf output/resultado.ttl \
+  --rdf output/resultado.ttl \º
   --desde ESP000000100 \
   --hasta ESP000000150 \
   --estado "Alta Definitiva,Baja Provisional"
 ```
 
-> El script descarga automáticamente el Excel actualizado desde el Ministerio, filtra por rango de CFR y opcionalmente por tipo de Estado. Genera también `output/estados.json` para uso web.
+🧩 Argumentos disponibles:
+
+* `--output`: ruta del Excel generado
+* `--jsonld`: salida opcional estructurada (JSON-LD)
+* `--rdf`: salida opcional para grafos semánticos (Turtle)
+* `--desde`: CFR inicial (obligatorio)
+* `--hasta`: CFR final (obligatorio)
+* `--estado`: uno o varios estados separados por coma (opcional)
 
 ---
 
-## 💻 Cómo usar (Web)
+## ⚙️ Cómo usar (Script Bash)
 
-Después de construir el contenedor Docker:
+Archivo: `run.sh`
+
+```bash
+#!/bin/bash
+
+python3 filter_cfr_excel.py \
+  --output output/resultado.xlsx \
+  --jsonld output/resultado.jsonld \
+  --rdf output/resultado.ttl \
+  --desde ESP000000100 \
+  --hasta ESP000000150
+```
+
+✅ Ejecuta con:
+
+```bash
+chmod +x run.sh
+./run.sh
+```
+
+---
+
+## 🐳 Cómo usar (Docker)
+
+### 🔨 Construcción local
 
 ```bash
 docker build -t buques-filter .
+```
+
+### ▶️ Ejecución
+
+```bash
 docker run -it --rm -p 8080:8080 buques-filter
 ```
 
-Accede a [http://localhost:8080](http://localhost:8080) para:
+Accede a: [http://localhost:8080](http://localhost:8080)
 
-* Seleccionar visualmente CFRs y Estados
-* Generar el comando CLI
-* Descargar salidas estructuradas
+### 🌐 Contenido expuesto
+
+* `index.html`: interfaz web para generación interactiva de comandos
+* `output/resultado.xlsx`: Excel filtrado
+* `output/resultado.jsonld`: JSON-LD estructurado
+* `output/resultado.ttl`: RDF Turtle
+* `output/estados.json`: lista dinámica para formulario web
 
 ---
 
-## 📂 Salidas generadas
+## 📂 Estructura de Salidas
 
-* ✅ `output/resultado.xlsx`: Excel con filtros y encabezado contextual
-* ✅ `output/resultado.jsonld`: Datos estructurados en JSON-LD (Schema.org-ready)
-* ✅ `output/resultado.ttl`: RDF Turtle para grafos semánticos
-* ✅ `output/estados.json`: Catálogo de estados detectados para interfaz web
+| Archivo                   | Descripción                                          |
+| ------------------------- | ---------------------------------------------------- |
+| `output/resultado.xlsx`   | Excel con filtros aplicados (CFR, Estado) y cabecera |
+| `output/resultado.jsonld` | Datos compatibles con Schema.org (JSON-LD)           |
+| `output/resultado.ttl`    | Exportación RDF (Turtle) para triplestores           |
+| `output/estados.json`     | Estados únicos detectados, para carga web dinámica   |
 
 ---
 
 ## 🧠 Casos de uso
 
-* Observatorios de flota pesquera
-* Portales de transparencia y trazabilidad
-* Sistemas expertos marítimos y de sostenibilidad
-* Integración en knowledge graphs e inteligencia legal
+* Dashboards de sostenibilidad y transparencia
+* Sistemas expertos marítimos
+* Grafos legales y semánticos
+* Publicaciones FAIR para investigación europea
 
 ---
 
 ## 🔄 Automatización CI/CD
 
-* 🔁 GitHub Actions (build + test + deploy)
-* 🐳 Docker con servidor web estático incluido
-* ☁️ Publicable vía GitHub Pages, Netlify o S3
-* 🕹️ Soporte para ejecución por cron o triggers legales
+* 🛠️ GitHub Actions (build/test/deploy)
+* 📦 Docker multiuso (CLI + frontend)
+* ☁️ Publicable en GitHub Pages, Netlify o servidores K3s/MicroK8s
 
 ---
 
-## 🤝 Colaboración
+## 🤝 Contribuir
 
-Consulta [CONTRIBUTING.md](CONTRIBUTING.md) para contribuir técnica o éticamente. Seguimos el estilo **AtlantyQA**: modular, documentado y ético.
+Consulta [CONTRIBUTING.md](CONTRIBUTING.md) para sumarte. Estilo AtlantyQA: modularidad, claridad, ética y trazabilidad pública.
 
 ---
 
 ## 🌍 Licencia
 
-Distribuido bajo **EUPL v1.2**, garantizando uso público, interoperabilidad legal y retorno comunitario.
+Distribuido bajo **EUPL v1.2**, favoreciendo su adopción pública, interoperabilidad legal y soberanía semántica.
 
 > “Por una Europa con soberanía semántica y transparencia pesquera.”
 
 ---
-
-¿Deseas que te genere el `CONTRIBUTING.md` base con estilo AtlantyQA o el `.github/workflows/ci.yml` de CI?

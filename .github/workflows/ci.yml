@@ -1,0 +1,47 @@
+name: CI – Filtro Semántico y API Flask
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ⬇️ Checkout repositorio
+        uses: actions/checkout@v3
+
+      - name: 🐍 Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: 📦 Instalar dependencias
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: 🧪 Ejecutar tests del backend Flask
+        run: pytest test_app.py
+
+      - name: ✅ Validar generación directa de filtros
+        run: |
+          python filter_cfr_excel.py \
+            --output output/test.xlsx \
+            --jsonld output/test.jsonld \
+            --rdf output/test.ttl \
+            --desde ESP000000100 \
+            --hasta ESP000000150 \
+            --estado "Alta Definitiva"
+
+      - name: 📁 Verificar salidas
+        run: |
+          test -f output/test.xlsx
+          test -f output/test.jsonld
+          test -f output/test.ttl
+
+      - name: 🧼 Limpieza
+        run: rm -rf output/*
