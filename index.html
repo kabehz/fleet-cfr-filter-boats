@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Filtro de Buques - CFR y Estado</title>
+  <style>
+    body { font-family: sans-serif; margin: 2em; }
+    label, select, input, button { display: block; margin-bottom: 1em; }
+    select[multiple] { height: 6em; width: 100%; }
+    code { background: #f0f0f0; padding: 0.5em; display: block; margin-top: 1em; }
+    .descarga { margin-top: 1em; display: none; }
+  </style>
+</head>
+<body>
+  <h1>Filtrar Buques por CFR y Estado</h1>
+
+  <label for="desde">CFR Desde:</label>
+  <input type="text" id="desde" value="ESP000000001">
+
+  <label for="hasta">CFR Hasta:</label>
+  <input type="text" id="hasta" value="ESP000200000">
+
+  <label for="estado">Estado(s):</label>
+  <select id="estado" multiple></select>
+
+  <button onclick="generar()">Ejecutar y generar Excel</button>
+
+  <div class="descarga">
+    <a href="/descargar" download>Descargar archivo generado</a>
+  </div>
+
+  <code id="salida"></code>
+
+  <script>
+    async function cargarEstados() {
+      try {
+        const response = await fetch("/static/estados.json");
+        const estados = await response.json();
+        const select = document.getElementById("estado");
+        estados.forEach(e => {
+          const option = document.createElement("option");
+          option.value = e;
+          option.textContent = e;
+          select.appendChild(option);
+        });
+      } catch (error) {
+        document.getElementById("salida").textContent = "Error al cargar estados.";
+      }
+    }
+
+    async function generar() {
+      const desde = document.getElementById("desde").value;
+      const hasta = document.getElementById("hasta").value;
+      const estados = Array.from(document.getElementById("estado").selectedOptions).map(o => o.value);
+
+      const payload = { desde, hasta, estado: estados };
+      const salida = document.getElementById("salida");
+      salida.textContent = "Procesando...";
+      document.querySelector(".descarga").style.display = "none";
+
+      try {
+        const res = await fetch("/generar", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const json = await res.json();
+        if (json.success) {
+          salida.textContent = "Archivo generado con éxito.";
+          document.querySelector(".descarga").style.display = "block";
+        } else {
+          salida.textContent = "Error: " + (json.error || "Fallo inesperado");
+        }
+      } catch (err) {
+        salida.textContent = "Error en la solicitud: " + err;
+      }
+    }
+
+    cargarEstados();
+  </script>
+</body>
+</html>

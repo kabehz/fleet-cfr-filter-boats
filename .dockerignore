@@ -1,0 +1,21 @@
+# Ignorar salidas generadas
+output/
+*.pyc
+__pycache__/
+*.log
+
+# Ignorar archivos temporales del sistema
+.DS_Store
+Thumbs.db
+
+# Ignorar entornos virtuales
+.venv/
+venv/
+
+# Ignorar control de IDEs
+.vscode/
+.idea/
+
+# Mantener archivos de frontend y configuración
+!static/
+!*.html
